@@ -6,9 +6,10 @@ strings is found, it will print the line number and the whole line in which
 it was found.
 
 __author__ = "Steve McLaughlin"
+__updated__ = "7/8/2016"
 
 __license__ = "GPL"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Steve McLaughlin"
 __status__ = "Prototype"
 
@@ -17,6 +18,7 @@ __status__ = "Prototype"
 import os
 import os.path
 import sys
+from itertools import islice
 
 if len(sys.argv) < 2:
     print 'No arguments passed in. Exiting...'
@@ -26,37 +28,32 @@ argz = []
 for arg in sys.argv:
     argz.append(arg)
 
-
-print 'Starting to search'
-
-# Goes through the current directory and its subdirectories and counts
-# the number of files with the file extension
-def getNumFiles():
-    numfiles = 0
-    for dirpath, dirnames, filenames in os.walk("."):
-        for filename in [f for f in filenames if f.endswith(".txt")]: # Any .txt
-            numfiles += 1
-    return 'There are {0} files with that extension in this directory and its subdirectories'.format(numfiles)
-
 # Converts a line into all lower case letters for case insensitive parsing
 def iterLower(line):
     s = line
     return s.lower()
 
+print 'Starting to search'
+
+# Goes through the current directory and its subdirectories and counts
+# the number of files with the file extension
+files = []
+for dirpath, dirnames, filenames in os.walk("."):
+    for filename in [f for f in filenames if f.endswith(".txt")]: # Any .txt
+        files.append(os.path.join(dirpath, filename))
+
+print'There are {0} files with that extension in this directory and its subdirectories'.format(len(files))
+
 # Parses through each file and checks for the specified strings
 # Note: This is currently a case insensitive search
-def parseFiles():
-    for dirpath, dirnames, filenames in os.walk("."):
-        for filename in [f for f in filenames if f.endswith(".txt")]: # Any .txt
-            print os.path.join(dirpath, filename)
-            with open(os.path.join(dirpath, filename), "r") as infile:
-                for num, line in enumerate(infile, 1):
-                    if any(s.lower() in iterLower(line) for s in argz):
-                        output = 'Line ' + `num`
-                        print output
-                        print line
-            print #Just a newline for formatting purposes
-
-
-print getNumFiles()
-parseFiles()
+for file in files:
+    if(os.path.isfile):
+        fileData = open(file, 'r')
+        for num, line in enumerate(fileData, 1):
+            if any(s.lower() in iterLower(line) for s in argz):
+                lineNum = file + ' Line: ' + `num`
+                print lineNum.rstrip('\n')
+                print (line).rstrip('\n')
+                #print (line.join(islice(fileData,1))).rstrip('\n') # prints the current line and the next line
+                print # this is just here for formatting
+        fileData.close()
